@@ -1,30 +1,93 @@
+// declaring modules used
 mod row_echelon;
+mod helpers;
+mod poly_fit;
 
+// declaring functionality of used modules
 use std::io;
 use row_echelon::row_echelon_form;
+use crate::helpers::PixCoord;
+use poly_fit::polynomial_fit;
 
 fn main() {
     let mut rows: String = String::new();
+    let mut coord_pairs_num: String = String::new();
     let mut matrix: Vec<f64> = Vec::with_capacity(0);
+    let mut answer: String = String::new();
 
-    println!("ROW ECHELON FORM\n\nEnter matrix height:");
+    println!("If you want row echelon form, enter y");
 
     io::stdin()
-        .read_line(&mut rows)
+        .read_line(&mut answer)
         .expect("failed to read the line");
 
-    let rows: usize = rows.trim().parse().expect("Please type a number!");
+    if &answer == "y\n" {
+        println!("ROW ECHELON FORM\n\nEnter matrix height:");
 
-    draw_matrix(&matrix, rows);
+        io::stdin()
+            .read_line(&mut rows)
+            .expect("failed to read the line");
+    
+        let rows: usize = rows.trim().parse().expect("Please type a number!");
+    
+        draw_matrix(&matrix, rows);
+    
+        matrix = populate_matrix(rows);
+    
+        matrix = row_echelon_form(matrix, rows, rows+1);
+    
+        println!("matrix that is in reduced row echelon form:");
+    
+        draw_matrix(&matrix, rows);
+    } else {
+        println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");
 
-    matrix = populate_matrix(rows);
+        io::stdin()
+            .read_line(&mut coord_pairs_num)
+            .expect("failed to read the line");
+    
+        let coord_pairs_num: usize = coord_pairs_num.trim().parse().expect("Please type a number!");
+    
+        let mut coord_pairs: Vec<PixCoord> = Vec::with_capacity(coord_pairs_num);
+    
+        for i in 0..coord_pairs_num {
+            let mut x: String = String::new();
+            let mut y: String = String::new();
+    
+            println!("pair {}", i+1);
+            println!("Enter x coordinate: ");
+            io::stdin()
+            .read_line(&mut x)
+            .expect("failed to read the line");
+    
+            let x: f64 = x.trim().parse().expect("Please type a number!");
+    
+            println!("Enter y coordinate: ");
+            io::stdin()
+            .read_line(&mut y)
+            .expect("failed to read the line");
+    
+            
+            let y: f64 = y.trim().parse().expect("Please type a number!");
+    
+            let coordinate: PixCoord = PixCoord { x: x, y: y };
+    
+            coord_pairs.push(coordinate);
+        }
+    
+        let coefficients: Vec<f64> = polynomial_fit(coord_pairs);
+    
+        println!("Coefficients for polynomial:");
+        for i in 0..coefficients.len() {
+            print!("{}={}, ", (i+97) as u8 as char,coefficients[i]);
+        }
+    }
 
-    matrix = row_echelon_form(matrix, rows, rows+1);
-
-    println!("matrix that is in reduced row echelon form:");
-
-    draw_matrix(&matrix, rows);
+    println!("\n\nBYE!");
 }
+
+
+
 
 fn draw_matrix(data: &Vec<f64>, rows: usize) {
     let columns: usize = rows + 1;

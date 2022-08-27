@@ -1,4 +1,4 @@
-// module with functions wor calculating reduced row echelon form for matrices
+// module with functions for calculating reduced row echelon form for matrices
 
 pub fn row_echelon_form(mut data: Vec<f64>, rows: usize, columns: usize) -> Vec<f64>{
   normalize_rows(&mut data, rows, columns);
