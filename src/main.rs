@@ -2,7 +2,7 @@ use std::io;
 
 fn main() {
     let mut rows: String = String::new();
-    let mut matrix: Vec<f64> = [].to_vec();
+    let mut matrix: Vec<f64> = Vec::with_capacity(0);
 
     println!("ROW ECHELON FORM\n\nEnter matrix height:");
 
@@ -14,23 +14,25 @@ fn main() {
 
     draw_matrix(&matrix, rows);
 
-    populate_matrix(&mut matrix, rows);
+    matrix = populate_matrix(rows);
 
     matrix = row_echelon_form(matrix, rows, rows+1);
 
-    println!("matrix that is in row echelon form:");
+    println!("matrix that is in reduced row echelon form:");
 
     draw_matrix(&matrix, rows);
 }
 
 fn draw_matrix(data: &Vec<f64>, rows: usize) {
+    let columns: usize = rows + 1;
     let mut value: f64;
+
     println!();
 
     for j in 0..rows {
-        for i in 0..=rows {
-            if j*(rows+1) + i < data.len() {
-                value = data[j*rows + i];
+        for i in 0..columns {
+            if j*columns + i < data.len() {
+                value = data[j*columns + i];
 
                 print!("{value}\t")
             } else {
@@ -42,11 +44,14 @@ fn draw_matrix(data: &Vec<f64>, rows: usize) {
     }
 }
 
-fn populate_matrix(data: &mut Vec<f64>, rows: usize) {
+fn populate_matrix(rows: usize) -> Vec<f64>{
+    let capacity: usize = rows * (rows + 1);
+
+    let mut data: Vec<f64> = Vec::with_capacity(capacity);
     let mut input_value: String = String::new();
     let mut value: f64;
 
-    for index in 0..(rows * (rows + 1)) {
+    for index in 0..capacity {
         println!("value #{index}");
 
         io::stdin()
@@ -57,13 +62,15 @@ fn populate_matrix(data: &mut Vec<f64>, rows: usize) {
 
         data.push(value);
 
-        draw_matrix(data, rows);
+        draw_matrix(&data, rows);
 
         input_value = String::from("");
     }
 
     let array_size = data.len();
     println!("matrix is populated!\nThe number of values in matrix is {array_size}");
+
+    return data;
 }
 
 
