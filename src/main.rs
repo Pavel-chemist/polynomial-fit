@@ -1,11 +1,11 @@
 // declaring modules used
-mod row_echelon;
+mod matrix;
 mod helpers;
 mod poly_fit;
 
 // declaring functionality of used modules
 use std::io;
-use row_echelon::row_echelon_form;
+use matrix::row_echelon_form;
 use crate::helpers::PixCoord;
 use poly_fit::polynomial_fit;
 
