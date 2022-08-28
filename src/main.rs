@@ -1,14 +1,14 @@
 // declaring modules used
 // declaring them in main makes it possible to other modules cross-use structs and functions
 mod matrix;
-mod matrix_str;
+mod matrix_fn;
 mod helpers;
 mod poly_fit;
 
 // declaring functionality of used modules
 use helpers::{PixCoord, read_input};
-use matrix_str::Matrix;
-use matrix::{row_echelon_form, draw_matrix, populate_matrix};
+use matrix::Matrix;
+use matrix_fn::{row_echelon_form, draw_matrix, populate_matrix};
 
 use poly_fit::polynomial_fit;
 
