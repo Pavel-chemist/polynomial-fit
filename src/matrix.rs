@@ -80,4 +80,50 @@ impl Matrix {
 
         return transposed_matrix;
     }
+
+    pub fn sum(addend1: &Matrix, addend2: &Matrix) -> Matrix {
+        let mut sum: Matrix = Matrix::new(addend1.rows, addend1.columns);
+
+        if addend1.rows == addend2.rows && addend1.columns == addend2.columns {
+            for i in 0..sum.size() {
+                sum.data[i] = addend1.data[i] + addend2.data[i];
+            }
+        } else {
+            panic!("Non-equal matrices cannot be summed!");
+        }
+
+        return sum;
+    }
+
+    pub fn scalar_multiply(matrix: &Matrix, multiplier: f64) -> Matrix {
+        let mut scaled_matrix: Matrix = Matrix::new(matrix.rows, matrix.columns);
+
+        for i in 0..matrix.size() {
+            scaled_matrix.data[i] = matrix.data[i] * multiplier;
+        }
+
+        return scaled_matrix;
+    }
+
+    pub fn multiply(left: &Matrix, right: &Matrix) -> Matrix {
+        if left.columns == right.rows {
+            let mut product: Matrix = Matrix::new(left.rows, right.columns);
+
+            for j in 0..product.rows {
+                for i in 0..product.columns {
+                    let mut running_sum: f64 = 0.0;
+
+                    for a in 0..left.columns {
+                        running_sum += left.get_value_at(a, j) * right.get_value_at(i, a);
+                    }
+
+                    product.set_value_at(i, j, running_sum);
+                }
+            }
+
+            return product;
+        } else {
+            panic!("left matrix should have the same number of columns as right rows!");
+        }
+    }
 }
