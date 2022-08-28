@@ -1,12 +1,12 @@
 // declaring modules used
+// declaring them in main makes it possible to other modules cross-use structs and functions
 mod matrix;
 mod helpers;
 mod poly_fit;
 
 // declaring functionality of used modules
-use std::io;
-use matrix::row_echelon_form;
-use crate::helpers::PixCoord;
+use helpers::{PixCoord, read_input};
+use matrix::{row_echelon_form, draw_matrix, populate_matrix};
 use poly_fit::polynomial_fit;
 
 fn main() {
@@ -31,17 +31,17 @@ fn main() {
         draw_matrix(&matrix, rows);
     } else {
         println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");    
-        let coord_pairs_num: usize = read_input("");
+        let coord_pairs_num: usize = read_input("please, enter positive integer number");
     
         let mut coord_pairs: Vec<PixCoord> = Vec::with_capacity(coord_pairs_num);
     
         for i in 0..coord_pairs_num {
             println!("pair {}", i+1);
             println!("Enter x coordinate: ");
-            let x: f64 = read_input("");
+            let x: f64 = read_input("enter a number");
     
             println!("Enter y coordinate: ");
-            let y: f64 = read_input("");
+            let y: f64 = read_input("enter a number");
     
             let coordinate: PixCoord = PixCoord { x: x, y: y };
     
@@ -57,91 +57,4 @@ fn main() {
     }
 
     println!("\n\nBYE!");
-}
-
-fn read_input<T: std::str::FromStr>(error_message: &str) -> T {
-    // generic function that reads input and checks for type (number or text)
-    // the error handling should be here
-    let mut input: String = String::new();
-    let result: T;
-    let error: &str;
-
-    if error_message.trim() == "" {
-        error = "use correct value type, e.g. number";
-    } else {
-        error = error_message;
-    }
-
-    loop {
-        io::stdin()
-        .read_line(&mut input)
-        .expect("failed to read the line");
-
-        input = input.trim().to_string();
-
-        match input.parse::<T>() {
-            Ok(parsed_value) => {
-                result = parsed_value;
-                break;
-            },
-            Err(_) => {
-                println!("{}", error);
-                input = String::new();
-                continue;
-            },
-        };
-    }
-
-    return result;
-}
-
-
-fn draw_matrix(data: &Vec<f64>, rows: usize) {
-    let columns: usize = rows + 1;
-    let mut value: f64;
-
-    println!();
-
-    for j in 0..rows {
-        for i in 0..columns {
-            if j*columns + i < data.len() {
-                value = data[j*columns + i];
-
-                print!("{value}\t")
-            } else {
-                print!("0 \t");
-            }
-        }
-
-        println!();
-    }
-}
-
-fn populate_matrix(rows: usize) -> Vec<f64>{
-    let capacity: usize = rows * (rows + 1);
-
-    let mut data: Vec<f64> = Vec::with_capacity(capacity);
-    let mut input_value: String = String::new();
-    let mut value: f64;
-
-    for index in 0..capacity {
-        println!("value #{index}");
-
-        io::stdin()
-            .read_line(&mut input_value)
-            .expect("failed to read the line");
-        
-        value = input_value.trim().parse().expect("Please type a number!");
-
-        data.push(value);
-
-        draw_matrix(&data, rows);
-
-        input_value = String::from("");
-    }
-
-    let array_size = data.len();
-    println!("matrix is populated!\nThe number of values in matrix is {array_size}");
-
-    return data;
 }

@@ -1,4 +1,5 @@
 // module with functions for calculating reduced row echelon form for matrices
+use crate::helpers::read_input;
 pub struct Matrix {
     pub rows: usize,
     pub columns: usize,
@@ -8,6 +9,50 @@ pub struct Matrix {
 /* impl Matrix() {
     
 } */
+
+
+pub fn draw_matrix(data: &Vec<f64>, rows: usize) {
+    let columns: usize = rows + 1;
+    let mut value: f64;
+
+    println!();
+
+    for j in 0..rows {
+        for i in 0..columns {
+            if j*columns + i < data.len() {
+                value = data[j*columns + i];
+
+                print!("{value}\t")
+            } else {
+                print!("0 \t");
+            }
+        }
+
+        println!();
+    }
+}
+
+pub fn populate_matrix(rows: usize) -> Vec<f64>{
+    let capacity: usize = rows * (rows + 1);
+
+    let mut data: Vec<f64> = Vec::with_capacity(capacity);
+    let mut value: f64;
+
+    for index in 0..capacity {
+        println!("value #{index}: ");
+        
+        value = read_input("enter number");
+
+        data.push(value);
+
+        draw_matrix(&data, rows);
+    }
+
+    let array_size = data.len();
+    println!("matrix is populated!\nThe number of values in matrix is {array_size}");
+
+    return data;
+}
 
 pub fn row_echelon_form(mut data: Vec<f64>, rows: usize, columns: usize) -> Vec<f64>{
   normalize_rows(&mut data, rows, columns);
