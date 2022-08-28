@@ -56,12 +56,15 @@ pub fn row_echelon_form(matrix: &Matrix) -> Matrix {
     for i in (0..result.rows()).rev() {
         subtract_row_up (&mut result, i );
     }
-  /* 
-    for i in 0..result.size() {
-        if result.data[i] == -0.0 {
-            result.data[i] = 0.0;
+
+    // dealing with -0.0  values
+    for j in 0..result.rows() {
+        for i in 0..result.columns() {    
+            if result.get_value_at(i, j) == -0.0 {
+                result.set_value_at(i, j, 0.0);
+            }
         }
-    } */
+    }
 
     return result;
 }

@@ -34,6 +34,13 @@ fn main() {
         println!("matrix that is in reduced row echelon form:");
     
         draw_matrix(&matrix);
+
+        matrix = Matrix::transpose(&matrix);
+
+        println!("transposed matrix:");
+    
+        draw_matrix(&matrix);
+
     } else {
         println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");    
         let coord_pairs_num: usize = read_input("please, enter positive integer number");
