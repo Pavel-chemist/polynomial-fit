@@ -10,25 +10,15 @@ use crate::helpers::PixCoord;
 use poly_fit::polynomial_fit;
 
 fn main() {
-    let mut rows: String = String::new();
-    let mut coord_pairs_num: String = String::new();
     let mut matrix: Vec<f64> = Vec::with_capacity(0);
-    let mut answer: String = String::new();
 
     println!("If you want row echelon form, enter y");
+    let answer: String = read_input("");
 
-    io::stdin()
-        .read_line(&mut answer)
-        .expect("failed to read the line");
-
-    if &answer == "y\n" {
+    if &answer == "y" {
         println!("ROW ECHELON FORM\n\nEnter matrix height:");
-
-        io::stdin()
-            .read_line(&mut rows)
-            .expect("failed to read the line");
     
-        let rows: usize = rows.trim().parse().expect("Please type a number!");
+        let rows: usize = read_input("please, enter positive integer number");
     
         draw_matrix(&matrix, rows);
     
@@ -40,35 +30,18 @@ fn main() {
     
         draw_matrix(&matrix, rows);
     } else {
-        println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");
-
-        io::stdin()
-            .read_line(&mut coord_pairs_num)
-            .expect("failed to read the line");
-    
-        let coord_pairs_num: usize = coord_pairs_num.trim().parse().expect("Please type a number!");
+        println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");    
+        let coord_pairs_num: usize = read_input("");
     
         let mut coord_pairs: Vec<PixCoord> = Vec::with_capacity(coord_pairs_num);
     
         for i in 0..coord_pairs_num {
-            let mut x: String = String::new();
-            let mut y: String = String::new();
-    
             println!("pair {}", i+1);
             println!("Enter x coordinate: ");
-            io::stdin()
-            .read_line(&mut x)
-            .expect("failed to read the line");
-    
-            let x: f64 = x.trim().parse().expect("Please type a number!");
+            let x: f64 = read_input("");
     
             println!("Enter y coordinate: ");
-            io::stdin()
-            .read_line(&mut y)
-            .expect("failed to read the line");
-    
-            
-            let y: f64 = y.trim().parse().expect("Please type a number!");
+            let y: f64 = read_input("");
     
             let coordinate: PixCoord = PixCoord { x: x, y: y };
     
@@ -86,7 +59,41 @@ fn main() {
     println!("\n\nBYE!");
 }
 
+fn read_input<T: std::str::FromStr>(error_message: &str) -> T {
+    // generic function that reads input and checks for type (number or text)
+    // the error handling should be here
+    let mut input: String = String::new();
+    let result: T;
+    let error: &str;
 
+    if error_message.trim() == "" {
+        error = "use correct value type, e.g. number";
+    } else {
+        error = error_message;
+    }
+
+    loop {
+        io::stdin()
+        .read_line(&mut input)
+        .expect("failed to read the line");
+
+        input = input.trim().to_string();
+
+        match input.parse::<T>() {
+            Ok(parsed_value) => {
+                result = parsed_value;
+                break;
+            },
+            Err(_) => {
+                println!("{}", error);
+                input = String::new();
+                continue;
+            },
+        };
+    }
+
+    return result;
+}
 
 
 fn draw_matrix(data: &Vec<f64>, rows: usize) {

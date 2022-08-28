@@ -1,4 +1,13 @@
 // module with functions for calculating reduced row echelon form for matrices
+pub struct Matrix {
+    pub rows: usize,
+    pub columns: usize,
+    pub data: Vec<f64>,
+}
+
+/* impl Matrix() {
+    
+} */
 
 pub fn row_echelon_form(mut data: Vec<f64>, rows: usize, columns: usize) -> Vec<f64>{
   normalize_rows(&mut data, rows, columns);
