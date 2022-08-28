@@ -1,6 +1,6 @@
 // fit the data with polynomial of order (num_points-1)
 
-use crate::matrix::row_echelon_form;
+use crate::matrix::{row_echelon_form, Matrix};
 use crate::helpers::{PixCoord, exp};
 
 pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
@@ -8,13 +8,12 @@ pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
 //length should not be less than 2 (?)
     let length: usize = coordinates.len();
 
-    let matrix_size: usize = (length + 1) * length;
-    
+
     let mut coefficients: Vec<f64> = vec![0.0; length]; //number of coefficients equals number of coordinate pairs given
     
     //create matrix to be processed to Row Echelon Form
     //length+1 by length
-    let mut matrix: Vec<f64> = vec![0.0; matrix_size];
+    let mut matrix: Matrix = Matrix::new(length, length + 1);
     /*
     
     Matrix to solve:
@@ -25,18 +24,21 @@ pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
     
     */
 
-    for j in 0..length { //matrix height
-        for i in 0..length {
+    println!("Matrix has {} rows and {} columns", matrix.rows(), matrix.columns());
+
+    for j in 0..matrix.rows() { //matrix height
+        for i in 0..(matrix.columns() - 1) {
             let exponent: i32 = i as i32;
-            matrix[j*(length+1) + i] = exp( coordinates[j].x, exponent );
+            matrix.set_value_at(i, j, exp( coordinates[j].x, exponent ));
         }
-        matrix[j*(length+1) + length] = coordinates[j].y;
+
+        matrix.set_value_at(matrix.columns() - 1, j, coordinates[j].y);
     }
     
-    matrix = row_echelon_form(matrix, length, length+1);
+    matrix = row_echelon_form(&matrix);
     
-    for i in 0..length {
-        coefficients[length - 1 - i] = matrix[i*(length+1) + length];
+    for i in 0..matrix.rows() {
+        coefficients[length - 1 - i] = matrix.get_value_at(matrix.columns() - 1, i);
     }
     
     return coefficients;

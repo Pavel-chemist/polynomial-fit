@@ -6,11 +6,11 @@ mod poly_fit;
 
 // declaring functionality of used modules
 use helpers::{PixCoord, read_input};
-use matrix::{row_echelon_form, draw_matrix, populate_matrix};
+use matrix::{Matrix, row_echelon_form, draw_matrix, populate_matrix};
 use poly_fit::polynomial_fit;
 
 fn main() {
-    let mut matrix: Vec<f64> = Vec::with_capacity(0);
+    let mut matrix: Matrix;
 
     println!("If you want row echelon form, enter y");
     let answer: String = read_input("");
@@ -19,16 +19,18 @@ fn main() {
         println!("ROW ECHELON FORM\n\nEnter matrix height:");
     
         let rows: usize = read_input("please, enter positive integer number");
+
+        matrix = Matrix::new(rows, rows+1);
     
-        draw_matrix(&matrix, rows);
+        draw_matrix(&matrix);
     
-        matrix = populate_matrix(rows);
+        populate_matrix(&mut matrix);
     
-        matrix = row_echelon_form(matrix, rows, rows+1);
+        matrix = row_echelon_form(&matrix);
     
         println!("matrix that is in reduced row echelon form:");
     
-        draw_matrix(&matrix, rows);
+        draw_matrix(&matrix);
     } else {
         println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");    
         let coord_pairs_num: usize = read_input("please, enter positive integer number");
