@@ -4,16 +4,21 @@ mod matrix;
 mod matrix_fn;
 mod helpers;
 mod poly_fit;
+mod linear_regression;
 
 // declaring functionality of used modules
-use helpers::{PixCoord, read_input};
+// use helpers::{PixCoord, read_input};
 use matrix::Matrix;
-use matrix_fn::{draw_matrix, populate_matrix};
-
-use poly_fit::polynomial_fit;
+// use matrix_fn::{draw_matrix, populate_matrix};
+// use poly_fit::polynomial_fit;
+use linear_regression::least_squares;
 
 fn main() {
-    let mut matrix: Matrix;
+
+    least_squares();
+
+
+    /* let mut matrix: Matrix;
 
     println!("If you want row echelon form, enter y");
     let answer: String = read_input("");
@@ -66,7 +71,7 @@ fn main() {
         for i in 0..coefficients.len() {
             print!("{}={}, ", (i+97) as u8 as char,coefficients[i]);
         }
-    }
+    } */
 
     println!("\n\nBYE!");
 }

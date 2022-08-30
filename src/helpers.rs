@@ -4,6 +4,10 @@ pub struct PixCoord {
     pub x: f64,
     pub y: f64,
 }
+/* 
+impl PixCoord {
+
+} */
 
 pub fn exp (n: f64, e: i32) -> f64 {
     let mut res: f64 = 1.0;
