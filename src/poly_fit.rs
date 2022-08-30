@@ -1,6 +1,5 @@
 // fit the data with polynomial of order (num_points-1)
 use crate::matrix::Matrix;
-use crate::matrix_fn::{row_echelon_form};
 use crate::helpers::{PixCoord, exp};
 
 pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
@@ -35,7 +34,7 @@ pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
         matrix.set_value_at(matrix.columns() - 1, j, coordinates[j].y);
     }
     
-    matrix = row_echelon_form(&matrix);
+    matrix = Matrix::row_echelon_form(&matrix);
     
     for i in 0..matrix.rows() {
         coefficients[length - 1 - i] = matrix.get_value_at(matrix.columns() - 1, i);

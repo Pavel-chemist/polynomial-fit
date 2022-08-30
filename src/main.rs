@@ -8,7 +8,7 @@ mod poly_fit;
 // declaring functionality of used modules
 use helpers::{PixCoord, read_input};
 use matrix::Matrix;
-use matrix_fn::{row_echelon_form, draw_matrix, populate_matrix};
+use matrix_fn::{draw_matrix, populate_matrix};
 
 use poly_fit::polynomial_fit;
 
@@ -29,7 +29,7 @@ fn main() {
     
         populate_matrix(&mut matrix);
     
-        matrix = row_echelon_form(&matrix);
+        matrix = Matrix::row_echelon_form(&matrix);
     
         println!("matrix that is in reduced row echelon form:");
     
