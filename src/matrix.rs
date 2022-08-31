@@ -1,3 +1,5 @@
+use crate::matrix_fn::draw_matrix;
+
 pub struct Matrix {
   rows: usize,
   columns: usize,
@@ -19,7 +21,6 @@ impl Matrix {
         if column < self.columns && row < self.rows {
             return self.data[row * self.columns + column];
         } else {
-            println!("Get value Error! Indices are outside of bounds!");
             if column >= self.columns {
                 println!("Trying to get at column {} while there are {} columns.", column+1, self.columns);
             }
@@ -27,7 +28,8 @@ impl Matrix {
             if row >= self.rows {
                 println!("Trying to get at row {} while there are {} rows.", row+1, self.rows);
             }
-            return 0.0;
+            
+            panic!("Get value Error! Indices are outside of bounds!");
         }
     }
 
@@ -35,7 +37,6 @@ impl Matrix {
         if column < self.columns && row < self.rows {
             self.data[row * self.columns + column] = value;
         } else {
-            println!("Set value Error! Indices are outside of bounds!");
             if column >= self.columns {
                 println!("Trying to set at column {} while there are {} columns.", column+1, self.columns);
             }
@@ -43,6 +44,8 @@ impl Matrix {
             if row >= self.rows {
                 println!("Trying to set at row {} while there are {} rows.", row+1, self.rows);
             }
+
+            panic!("Set value Error! Indices are outside of bounds!");
         }
     }
 
@@ -107,14 +110,15 @@ impl Matrix {
 
     pub fn multiply(left: &Matrix, right: &Matrix) -> Matrix {
         if left.columns == right.rows {
+            let common = left.columns;
             let mut product: Matrix = Matrix::new(left.rows, right.columns);
 
             for j in 0..product.rows {
                 for i in 0..product.columns {
                     let mut running_sum: f64 = 0.0;
 
-                    for a in 0..left.columns {
-                        running_sum += left.get_value_at(a, j) * right.get_value_at(i, a);
+                    for c in 0..common {
+                        running_sum += left.get_value_at(c, j) * right.get_value_at(i, c);
                     }
 
                     product.set_value_at(i, j, running_sum);
@@ -128,22 +132,37 @@ impl Matrix {
     }
 
     pub fn row_echelon_form(matrix: &Matrix) -> Matrix {
+        println!("Converting to reduced row_echelon_form");
+
         let mut result: Matrix = Matrix::copy(matrix);
+
+        println!("copied matrix:");
+        draw_matrix(&result);  
     
         // make all rows in matrix start with 1.0
         normalize_rows(&mut result);
+
+        println!("normalized matrix:");
+        draw_matrix(&result);  
     
         // convert matrix to row echelon form
         for i in 0..(result.rows() - 1) {
             subtract_row_down ( &mut result, i );
             normalize_rows ( &mut result );
         }
+
+        println!("matrix in row echelon form:");
+        draw_matrix(&result);  
       
         // convert echelon matrix to reduced row echelon form
         for i in (0..result.rows()).rev() {
             subtract_row_up (&mut result, i );
         }
+
+        println!("matrix in reduced row echelon form:");
+        draw_matrix(&result);
     
+        println!("dealing with -0.0 values...");
         // dealing with -0.0  values
         for j in 0..result.rows() {
             for i in 0..result.columns() {    
@@ -152,6 +171,9 @@ impl Matrix {
                 }
             }
         }
+
+        println!("reduced row echelon form result:");
+        draw_matrix(&result);
     
         return result;
     }
@@ -190,6 +212,8 @@ fn subtract_row_down (matrix: &mut Matrix, row_to_subtract: usize)
     // substracting copy of row from all rows underneath it
     if row_to_subtract < matrix.rows() {
         for j in (row_to_subtract + 1)..matrix.rows() {
+            println!("subtracting row {} from row {}...", row_to_subtract+1, j+1);
+
             for i in 0..matrix.columns() {
                 let subtracted_value: f64 = matrix.get_value_at(i, j) - matrix.get_value_at(i, row_to_subtract);
 

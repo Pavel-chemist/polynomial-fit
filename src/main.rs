@@ -7,23 +7,19 @@ mod poly_fit;
 mod linear_regression;
 
 // declaring functionality of used modules
-// use helpers::{PixCoord, read_input};
+use helpers::{PixCoord, read_input};
 use matrix::Matrix;
-// use matrix_fn::{draw_matrix, populate_matrix};
-// use poly_fit::polynomial_fit;
+use matrix_fn::{draw_matrix, populate_matrix};
+use poly_fit::polynomial_fit;
 use linear_regression::least_squares;
 
 fn main() {
+    let mut matrix: Matrix;
 
-    least_squares();
-
-
-    /* let mut matrix: Matrix;
-
-    println!("If you want row echelon form, enter y");
+    println!("Options:\n row echelon form --- ref,\n polynomial fit --- pf,\n linear regression --- lr");
     let answer: String = read_input("");
 
-    if &answer == "y" {
+    if &answer == "ref" {
         println!("ROW ECHELON FORM\n\nEnter matrix height:");
     
         let rows: usize = read_input("please, enter positive integer number");
@@ -40,13 +36,7 @@ fn main() {
     
         draw_matrix(&matrix);
 
-        matrix = Matrix::transpose(&matrix);
-
-        println!("transposed matrix:");
-    
-        draw_matrix(&matrix);
-
-    } else {
+    } else if &answer == "pf"{
         println!("\nFitting data with polynomial:\nenter the number of coordinate pairs:");    
         let coord_pairs_num: usize = read_input("please, enter positive integer number");
     
@@ -71,7 +61,9 @@ fn main() {
         for i in 0..coefficients.len() {
             print!("{}={}, ", (i+97) as u8 as char,coefficients[i]);
         }
-    } */
+    } else if &answer == "lr" {
+        least_squares();
+    }
 
     println!("\n\nBYE!");
 }
