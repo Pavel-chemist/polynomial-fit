@@ -182,6 +182,7 @@ impl Matrix {
 fn normalize_rows(matrix: &mut Matrix) {
     // normalized rows are those which have first non-zero element = 1.0
     // rows are normalized by dividing all elements by leading non-zero value
+    println!("normalizing rows...");
 
     let mut leading_value: f64;
     let mut count: usize;
@@ -193,6 +194,12 @@ fn normalize_rows(matrix: &mut Matrix) {
 
         // find first non-zero value in row
         while leading_value == 0.0 {
+            if count == matrix.columns {
+                leading_value = 1.0;
+
+                break;
+            }
+
             leading_value = matrix.get_value_at(count, j);
 
             count = count + 1;
@@ -215,7 +222,10 @@ fn subtract_row_down (matrix: &mut Matrix, row_to_subtract: usize)
             println!("subtracting row {} from row {}...", row_to_subtract+1, j+1);
 
             for i in 0..matrix.columns() {
-                let subtracted_value: f64 = matrix.get_value_at(i, j) - matrix.get_value_at(i, row_to_subtract);
+                println!("subtracting at column {}, in row of length {}", i+1, matrix.columns());
+                let low_val: f64 = matrix.get_value_at(i, j);
+                let subtr_val: f64 = matrix.get_value_at(i, row_to_subtract);
+                let subtracted_value: f64 = low_val - subtr_val;
 
                 matrix.set_value_at(i, j, subtracted_value);
             }
@@ -229,6 +239,7 @@ fn subtract_row_down (matrix: &mut Matrix, row_to_subtract: usize)
 fn subtract_row_up (matrix: &mut Matrix, row_to_subtract: usize)
 {
     // subtracting a weighted copy of row from all the rows above it
+    println!("subtracting row up...");
 
     let mut leading_value_index: usize = 0;
     let mut coefficient: f64;
@@ -240,10 +251,20 @@ fn subtract_row_up (matrix: &mut Matrix, row_to_subtract: usize)
             break;
         }
     }
+
+    println!("leading value index is {}", leading_value_index);
   
     //subtracting rows such that on leading_value_index result become zero
     for j in (0..row_to_subtract).rev() {
-        coefficient = matrix.get_value_at(leading_value_index, j) / matrix.get_value_at(leading_value_index, row_to_subtract);
+        println!("(leading) value at index {} is {}", leading_value_index, matrix.get_value_at(leading_value_index, row_to_subtract));
+
+        if matrix.get_value_at(leading_value_index, row_to_subtract) == 0.0 {
+            coefficient = 1.0;
+        } else {
+            coefficient = matrix.get_value_at(leading_value_index, j) / matrix.get_value_at(leading_value_index, row_to_subtract);
+        }
+
+        println!("coefficient = {}", coefficient);
 
         for i in 0..matrix.columns() {
             let subtracted_value: f64 = matrix.get_value_at(i, j) - coefficient * matrix.get_value_at(i, row_to_subtract);

@@ -2,13 +2,14 @@
 // later add polynomial
 
 use crate::matrix::Matrix;
-use crate::helpers::{PixCoord, read_input};
+use crate::helpers::{PixCoord, read_input, exp};
 use crate::matrix_fn::draw_matrix;
 
 pub fn least_squares(/* coord_pairs: Vec<PixCoord> */) /* -> Vec<f64> */ {
   let mut coordinates: Vec<PixCoord> = Vec::with_capacity(16);
-  let mut result: Vec<f64> = vec![0.0; 2];
+  let mut result: Vec<f64> = Vec::with_capacity(16);
   let mut answer: String = String::from("y");
+  let mut power: usize = 1;
 
   println!("Enter the coordinates of point:");
 
@@ -33,12 +34,22 @@ pub fn least_squares(/* coord_pairs: Vec<PixCoord> */) /* -> Vec<f64> */ {
     println!("x: {},\ty: {}", coordinates[i].x, coordinates[i].y);
   }
 
-  let mut matrix_a = Matrix::new(coordinates.len(), 2);
+  println!("Enter the power of polynomial (1-{})", coordinates.len() - 1);
+  power = read_input("enter non-negative integer");
+
+  let mut matrix_a = Matrix::new(coordinates.len(), power + 1);
   let mut vector_b: Matrix = Matrix::new(coordinates.len(), 1);
 
   for i in 0..coordinates.len() {
-    matrix_a.set_value_at(0, i, coordinates[i].x);
-    matrix_a.set_value_at(1, i, 1.0);
+    // matrix_a.set_value_at(0, i, coordinates[i].x);
+    // matrix_a.set_value_at(1, i, 1.0);
+
+    for p in 0..=power {
+      let value = exp(coordinates[i].x, p as i32);
+      println!("{} to degree {} is {} - set to col {}", coordinates[i].x, p, value, matrix_a.columns() - p - 1);
+      matrix_a.set_value_at(matrix_a.columns() - p - 1, i, value);
+    }
+
     vector_b.set_value_at(0, i, coordinates[i].y);
   }
 
@@ -87,7 +98,7 @@ pub fn least_squares(/* coord_pairs: Vec<PixCoord> */) /* -> Vec<f64> */ {
   draw_matrix(&eq_system);
 
   for i in 0..eq_system.rows() {
-    result[i] = eq_system.get_value_at(eq_system.columns() - 1, i);
+    result.push(eq_system.get_value_at(eq_system.columns() - 1, i));
   }
 
 
