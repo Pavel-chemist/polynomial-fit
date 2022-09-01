@@ -61,6 +61,32 @@ impl Matrix {
         return self.columns;
     }
 
+    pub fn swap_rows(&mut self, row1: usize, row2: usize) {
+        if (row1 < self.rows && row2 < self.rows) {
+            let mut value_hold: f64;
+            for i in 0..self.columns {
+                value_hold = self.get_value_at(i, row1);
+                self.set_value_at(i, row1, self.get_value_at(i, row2));
+                self.set_value_at(i, row2, value_hold);
+            }
+        } else {
+            panic!("swapping non-existent rows!");
+        }
+    }
+
+    pub fn swap_columns(&mut self, column1: usize, column2: usize) {
+        if (column1 < self.columns && column2 < self.columns) {
+            let mut value_hold: f64;
+            for j in 0..self.rows {
+                value_hold = self.get_value_at(column1, j);
+                self.set_value_at(column1, j, self.get_value_at(column2, j));
+                self.set_value_at(column2, j, value_hold);
+            }
+        } else {
+            panic!("swapping non-existent rows!");
+        }
+    }
+
     // matrix related
     pub fn copy(matrix_to_be_copied: &Matrix) -> Matrix {
         let mut copied_matrix: Matrix = Matrix::new(matrix_to_be_copied.rows, matrix_to_be_copied.columns);
@@ -187,6 +213,8 @@ fn normalize_rows(matrix: &mut Matrix) {
     let mut leading_value: f64;
     let mut count: usize;
   
+    sort_rows(matrix);
+
     for j in 0..matrix.rows() { 
         // for each row...
         count = 0;
@@ -214,8 +242,51 @@ fn normalize_rows(matrix: &mut Matrix) {
     }
 }
 
-fn subtract_row_down (matrix: &mut Matrix, row_to_subtract: usize)
-{
+pub fn sort_rows(matrix: &mut Matrix) {
+    let mut lead_val_index: usize = 0;
+    let mut lead_val_index_next: usize = 0;
+    let mut has_rows_swapped: bool = false;
+
+    for sweep in 0..matrix.rows - 1 {
+        println!("sweep #{}", sweep + 1);
+        has_rows_swapped = false;
+
+        for j in 0..matrix.rows - 1 {
+            for i in 0..matrix.columns {
+                if matrix.get_value_at(i, j) != 0.0 {
+                    lead_val_index = i;
+    
+                    break;
+                }
+            }
+            
+            for  i in 0..matrix.columns {
+                if matrix.get_value_at(i, j + 1) != 0.0 {
+                    lead_val_index_next = i;
+    
+                    break;
+                }
+            }
+    
+            if lead_val_index_next < lead_val_index {
+                println!("swapping rows {} and {}", j +1, j + 2);
+                matrix.swap_rows(j, j + 1);
+
+                has_rows_swapped = true;
+
+                draw_matrix(&matrix);
+            }
+        }
+
+        // if no rows been swapped, then matrix is sorted already
+        if !has_rows_swapped {
+            println!("matrix has rows sorted");
+            break;
+        }
+    } 
+}
+
+fn subtract_row_down(matrix: &mut Matrix, row_to_subtract: usize) {
     // substracting copy of row from all rows underneath it
     if row_to_subtract < matrix.rows() {
         for j in (row_to_subtract + 1)..matrix.rows() {
@@ -236,8 +307,7 @@ fn subtract_row_down (matrix: &mut Matrix, row_to_subtract: usize)
     }
 }
 
-fn subtract_row_up (matrix: &mut Matrix, row_to_subtract: usize)
-{
+fn subtract_row_up(matrix: &mut Matrix, row_to_subtract: usize) {
     // subtracting a weighted copy of row from all the rows above it
     println!("subtracting row up...");
 
