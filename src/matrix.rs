@@ -205,6 +205,23 @@ impl Matrix {
     }
 }
 
+fn is_second_row_starts_later(matrix: &Matrix, row1: usize, row2: usize) -> bool {
+    if row1 < matrix.rows && row2 < matrix.rows {
+        // find first column where at least one value is not zero
+        for i in 0..matrix.columns {
+            if matrix.get_value_at(i, row1) != 0.0 || matrix.get_value_at(i, row2) != 0.0 {
+                if matrix.get_value_at(i, row2) == 0.0 {
+                    return true;
+                }
+            };
+        }
+
+        return false;
+    } else {
+        panic!("Trying to compare non-existent rows!");
+    }
+}
+
 fn normalize_rows(matrix: &mut Matrix) {
     // normalized rows are those which have first non-zero element = 1.0
     // rows are normalized by dividing all elements by leading non-zero value
