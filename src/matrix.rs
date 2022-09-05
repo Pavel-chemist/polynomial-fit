@@ -62,7 +62,7 @@ impl Matrix {
     }
 
     pub fn swap_rows(&mut self, row1: usize, row2: usize) {
-        if (row1 < self.rows && row2 < self.rows) {
+        if row1 < self.rows && row2 < self.rows {
             let mut value_hold: f64;
             for i in 0..self.columns {
                 value_hold = self.get_value_at(i, row1);
@@ -75,7 +75,7 @@ impl Matrix {
     }
 
     pub fn swap_columns(&mut self, column1: usize, column2: usize) {
-        if (column1 < self.columns && column2 < self.columns) {
+        if column1 < self.columns && column2 < self.columns {
             let mut value_hold: f64;
             for j in 0..self.rows {
                 value_hold = self.get_value_at(column1, j);
@@ -209,13 +209,16 @@ fn is_second_row_starts_later(matrix: &Matrix, row1: usize, row2: usize) -> bool
     if row1 < matrix.rows && row2 < matrix.rows {
         // find first column where at least one value is not zero
         for i in 0..matrix.columns {
-            if matrix.get_value_at(i, row1) != 0.0 || matrix.get_value_at(i, row2) != 0.0 {
-                if matrix.get_value_at(i, row2) == 0.0 {
-                    return true;
-                }
+            if matrix.get_value_at(i, row1) == 0.0 && matrix.get_value_at(i, row2) == 0.0 {
+                // continue -- zero, above zero --> going to check next column
+            } else if matrix.get_value_at(i, row1) != 0.0 && matrix.get_value_at(i, row2) == 0.0 {
+                return true;
+            } else {
+                return false;
             };
         }
 
+        // in case both rows are zeros:
         return false;
     } else {
         panic!("Trying to compare non-existent rows!");
@@ -308,14 +311,16 @@ fn subtract_row_down(matrix: &mut Matrix, row_to_subtract: usize) {
     if row_to_subtract < matrix.rows() {
         for j in (row_to_subtract + 1)..matrix.rows() {
             println!("subtracting row {} from row {}...", row_to_subtract+1, j+1);
-
-            for i in 0..matrix.columns() {
-                println!("subtracting at column {}, in row of length {}", i+1, matrix.columns());
-                let low_val: f64 = matrix.get_value_at(i, j);
-                let subtr_val: f64 = matrix.get_value_at(i, row_to_subtract);
-                let subtracted_value: f64 = low_val - subtr_val;
-
-                matrix.set_value_at(i, j, subtracted_value);
+            
+            if !is_second_row_starts_later(matrix, row_to_subtract, j) {
+                for i in 0..matrix.columns() {
+                    println!("subtracting at column {}, in row of length {}", i+1, matrix.columns());
+                    let low_val: f64 = matrix.get_value_at(i, j);
+                    let subtr_val: f64 = matrix.get_value_at(i, row_to_subtract);
+                    let subtracted_value: f64 = low_val - subtr_val;
+    
+                    matrix.set_value_at(i, j, subtracted_value);
+                }
             }
         }
     } else {
