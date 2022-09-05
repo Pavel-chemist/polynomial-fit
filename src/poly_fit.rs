@@ -23,8 +23,6 @@ pub fn polynomial_fit (coordinates: Vec<PixCoord> ) -> Vec<f64> {
     
     */
 
-    println!("Matrix has {} rows and {} columns", matrix.rows(), matrix.columns());
-
     for j in 0..matrix.rows() { //matrix height
         for i in 0..(matrix.columns() - 1) {
             let exponent: i32 = i as i32;

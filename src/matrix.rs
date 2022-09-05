@@ -1,5 +1,3 @@
-use crate::matrix_fn::draw_matrix;
-
 pub struct Matrix {
   rows: usize,
   columns: usize,
@@ -158,37 +156,22 @@ impl Matrix {
     }
 
     pub fn row_echelon_form(matrix: &Matrix) -> Matrix {
-        println!("Converting to reduced row_echelon_form");
-
         let mut result: Matrix = Matrix::copy(matrix);
-
-        println!("copied matrix:");
-        draw_matrix(&result);  
     
         // make all rows in matrix start with 1.0
         normalize_rows(&mut result);
-
-        println!("normalized matrix:");
-        draw_matrix(&result);  
     
         // convert matrix to row echelon form
         for i in 0..(result.rows() - 1) {
             subtract_row_down ( &mut result, i );
             normalize_rows ( &mut result );
         }
-
-        println!("matrix in row echelon form:");
-        draw_matrix(&result);  
       
         // convert echelon matrix to reduced row echelon form
         for i in (0..result.rows()).rev() {
             subtract_row_up (&mut result, i );
         }
 
-        println!("matrix in reduced row echelon form:");
-        draw_matrix(&result);
-    
-        println!("dealing with -0.0 values...");
         // dealing with -0.0  values
         for j in 0..result.rows() {
             for i in 0..result.columns() {    
@@ -197,9 +180,6 @@ impl Matrix {
                 }
             }
         }
-
-        println!("reduced row echelon form result:");
-        draw_matrix(&result);
     
         return result;
     }
@@ -228,7 +208,6 @@ fn is_second_row_starts_later(matrix: &Matrix, row1: usize, row2: usize) -> bool
 fn normalize_rows(matrix: &mut Matrix) {
     // normalized rows are those which have first non-zero element = 1.0
     // rows are normalized by dividing all elements by leading non-zero value
-    println!("normalizing rows...");
 
     let mut leading_value: f64;
     let mut count: usize;
@@ -268,7 +247,6 @@ pub fn sort_rows(matrix: &mut Matrix) {
     let mut has_rows_swapped: bool = false;
 
     for sweep in 0..matrix.rows - 1 {
-        println!("sweep #{}", sweep + 1);
         has_rows_swapped = false;
 
         for j in 0..matrix.rows - 1 {
@@ -289,18 +267,14 @@ pub fn sort_rows(matrix: &mut Matrix) {
             }
     
             if lead_val_index_next < lead_val_index {
-                println!("swapping rows {} and {}", j +1, j + 2);
                 matrix.swap_rows(j, j + 1);
 
                 has_rows_swapped = true;
-
-                draw_matrix(&matrix);
             }
         }
 
         // if no rows been swapped, then matrix is sorted already
         if !has_rows_swapped {
-            println!("matrix has rows sorted");
             break;
         }
     } 
@@ -309,12 +283,9 @@ pub fn sort_rows(matrix: &mut Matrix) {
 fn subtract_row_down(matrix: &mut Matrix, row_to_subtract: usize) {
     // substracting copy of row from all rows underneath it
     if row_to_subtract < matrix.rows() {
-        for j in (row_to_subtract + 1)..matrix.rows() {
-            println!("subtracting row {} from row {}...", row_to_subtract+1, j+1);
-            
+        for j in (row_to_subtract + 1)..matrix.rows() {            
             if !is_second_row_starts_later(matrix, row_to_subtract, j) {
                 for i in 0..matrix.columns() {
-                    println!("subtracting at column {}, in row of length {}", i+1, matrix.columns());
                     let low_val: f64 = matrix.get_value_at(i, j);
                     let subtr_val: f64 = matrix.get_value_at(i, row_to_subtract);
                     let subtracted_value: f64 = low_val - subtr_val;
@@ -324,14 +295,13 @@ fn subtract_row_down(matrix: &mut Matrix, row_to_subtract: usize) {
             }
         }
     } else {
-        println!("Error! Cannot subtract unexistent row!");
         println!("Row number is {}, while there are only {} rows.", row_to_subtract + 1, matrix.rows());
+        panic!("Error! Cannot subtract unexistent row!");
     }
 }
 
 fn subtract_row_up(matrix: &mut Matrix, row_to_subtract: usize) {
     // subtracting a weighted copy of row from all the rows above it
-    println!("subtracting row up...");
 
     let mut leading_value_index: usize = 0;
     let mut coefficient: f64;
@@ -343,20 +313,14 @@ fn subtract_row_up(matrix: &mut Matrix, row_to_subtract: usize) {
             break;
         }
     }
-
-    println!("leading value index is {}", leading_value_index);
   
     //subtracting rows such that on leading_value_index result become zero
     for j in (0..row_to_subtract).rev() {
-        println!("(leading) value at index {} is {}", leading_value_index, matrix.get_value_at(leading_value_index, row_to_subtract));
-
         if matrix.get_value_at(leading_value_index, row_to_subtract) == 0.0 {
             coefficient = 1.0;
         } else {
             coefficient = matrix.get_value_at(leading_value_index, j) / matrix.get_value_at(leading_value_index, row_to_subtract);
         }
-
-        println!("coefficient = {}", coefficient);
 
         for i in 0..matrix.columns() {
             let subtracted_value: f64 = matrix.get_value_at(i, j) - coefficient * matrix.get_value_at(i, row_to_subtract);
